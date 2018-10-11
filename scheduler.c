@@ -94,8 +94,10 @@ void PrintUsage(){
 }
 
 void printlines(Queue* lista_procesos){
-	for(int i = 0; i < lista_procesos -> length; i++){
+	if(lista_procesos -> length > 0){
 		printf("Cola Ready: \n");
+	}
+	for(int i = 0; i < lista_procesos -> length; i++){
 		//printf("p %d |",lista_procesos -> listprocess[i] -> pid);
 		//printf("t %d |",lista_procesos -> listprocess[i] -> tiempo);
 		//printf("r %d |",lista_procesos -> listprocess[i] -> rafagas);
@@ -197,7 +199,7 @@ int simulation(Procesos* lista_procesos, int quantum){
 	cpuprocess -> t_actual = 0;
 	int termino = 1;
 	int timer = 0;
-	while(termino != 0){
+	while(termino != 0 && timer != 70){
 		//printf("tiempo actual CPU: %d\n",timer);
 		//reviso si un proceso nuevo tiene que pasar a ready
 		ChecknostartedProcess(lista_procesos, readylist, timer);
@@ -205,8 +207,12 @@ int simulation(Procesos* lista_procesos, int quantum){
 		CheckwaitlistProcess(waitlist, readylist, timer);
 		//Reviso si cpu libera un proceso, si es asi entra uno de ready
 		Checkcpu(cpuprocess, readylist, waitlist, finishlist, timer, lista_procesos);
-		//printlines(readylist);
-		addtimeready(readylist);
+	/*	printlines(readylist);
+		printf("Cola Waiting: \n");
+		printlines(waitlist);
+		printf("Cola FINISH: \n");
+		printlines(finishlist);
+	*/addtimeready(readylist);
 		if(lista_procesos -> length == finishlist -> length){
 			//printf("Terminaron todos\n");
 			termino = 0;
@@ -287,6 +293,9 @@ void CheckwaitlistProcess(Queue* waitlist, Queue* readylist,int timer){
 						}
 					}
 				}
+			}
+			else{ // Lugar del error, no existia este else para el caso de igual a 2
+				waitlist -> listprocess[0] = waitlist -> listprocess[1];
 			}
 		}
 	}
